@@ -1,26 +1,51 @@
-import { Text, View, TextInput, Button } from "react-native";
+import { StyleSheet, Text, View, TextInput } from "react-native";
 import React from "react";
-
-const App = () => {
-  const Inputan = ({ nama, color }) => {
-    return (
-      <TextInput
-        placeholder={`Masukan ${nama}`}
+const ButtonCostum = ({ text, color }) => {
+  return (
+    <View>
+      <View
         style={{
-          borderWidth: 1,
-          borderColor: "white",
-          borderRadius: 10,
+          backgroundColor: color,
           width: 250,
-          height: 50,
-          marginVertical: 10,
-          padding: 10,
-          backgroundColor: "blue",
-          color: color,
+          height: 100,
+          borderRadius: 50,
+          justifyContent: "center",
+          marginButtom: 10,
         }}
-      />
-    );
-  };
+      >
+        <Text
+          style={{
+            textAlign: "center",
+            fontsize: 30,
+            fontWeight: "bold",
+          }}
+        >
+          {text}
+        </Text>
+      </View>
+    </View>
+  );
+};
 
+// Custom component, TextInputCustom
+const TextInputCustom = ({ placeholder, color, typeKeyboard }) => {
+  return (
+    <TextInput
+      keyboardType={typeKeyboard}
+      placeholder={placeholder}
+      style={{
+        width: 250,
+        height: 50,
+        borderColor: color,
+        borderWidth: 3,
+        borderRadius: 10,
+        marginBottom: 10,
+        paddingLeft: 10,
+      }}
+    />
+  );
+};
+const App = () => {
   return (
     <View
       style={{
@@ -29,25 +54,19 @@ const App = () => {
         alignItems: "center",
       }}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-around",
-          width: "100%",
-        }}
-      >
-        <View style={{ alignItems: "center" }}>
-          <Text style={{ fontSize: 40, marginBottom: 150 }}></Text>
-          <Button title="Sign Up" onPress={() => {}} />
-        </View>
-        <View style={{ alignItems: "center" }}>
-          <Text style={{ fontSize: 40, marginBottom: 150}}></Text>
-          
-          <Button title="Sign In" onPress={() => {}} />
-        </View>
-      </View>
+      <TextInputCustom
+        placeholder="Masukkan Nama"
+        color="pink"
+        typeKeyboard="default"
+      />
+      <TextInputCustom
+        placeholder="Masukkan Nomor hp"
+        color="pink"
+        typeKeyboard="numeric"
+      />
     </View>
   );
 };
-
 export default App;
+
+const style = StyleSheet.create({});
