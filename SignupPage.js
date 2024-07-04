@@ -20,7 +20,7 @@ const CustomTextInput = ({ placeholder, color, typeKeyboard, secureTextEntry }) 
   );
 };
 
-export default function SignUpScreen() {
+export default function SignUpScreen({navigation}) {
   const [fontsLoaded] = useFonts({
     'Metro-Black': require('./assets/fonts/Metropolis-Black.otf'),
     'Metro-Bold': require('./assets/fonts/Metropolis-Bold.otf'),
@@ -37,7 +37,7 @@ export default function SignUpScreen() {
       <CustomTextInput placeholder="Name" color="gray" typeKeyboard="default" />
       <CustomTextInput placeholder="Email" color="gray" typeKeyboard="email-address" />
       <CustomTextInput placeholder="Password" color="gray" typeKeyboard="default" secureTextEntry={true} />
-      <CustomButton text="SIGN UP" color="red" onPress={() => {}} />
+      <CustomButton text="SIGN UP" color="red" onPress={()=>navigation.navigate("ForgetPassword")} />
       <Text style={[styles.alreadyText, { fontFamily: 'Metro-Medium' }]}>Already have an account?</Text>
       <Text style={[styles.orText, { fontFamily: 'Metro-Medium' }]}>Or sign up with social account</Text>
       <View style={styles.socialIconsContainer}>

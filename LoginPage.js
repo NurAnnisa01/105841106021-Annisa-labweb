@@ -20,7 +20,7 @@ const TextInputCustom = ({ placeholder, color, typeKeyboard, secureTextEntry }) 
   );
 };
 
-export default function Login() {
+export default function Login({navigation}) {
   const [fontsLoaded] = useFonts({
     'Metropolis-Bold': require('./assets/fonts/Metropolis-Bold.otf'),
     'Metropolis-Medium': require('./assets/fonts/Metropolis-Medium.otf'),
@@ -36,7 +36,7 @@ export default function Login() {
       <TextInputCustom placeholder="Email" color="gray" typeKeyboard="email-address" />
       <TextInputCustom placeholder="Password" color="gray" typeKeyboard="default" secureTextEntry={true} />
       <Text style={[styles.forgotPasswordText, { fontFamily: 'Metropolis-Medium' }]}>Forgot your password?</Text>
-      <ButtonCustom text="LOGIN" color="red" onPress={() => {}} />
+      <ButtonCustom text="LOGIN" color="red" onPress={()=>navigation.navigate("Signup")} />
       <Text style={[styles.orText, { fontFamily: 'Metropolis-Medium' }]}>Or login with social account</Text>
       <View style={styles.socialContainer}>
         <TouchableOpacity onPress={() => {}}>
