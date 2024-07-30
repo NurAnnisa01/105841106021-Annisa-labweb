@@ -1,215 +1,120 @@
-import { StyleSheet, Text, View, ActivityIndicator, ScrollView, Button, TextInput } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import ImageSlider from './imageSlider';
+import { View, Text, Button, Image, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 
-const Api = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [singlePost, setSinglePost] = useState(null);
-  const [postId, setPostId] = useState('');
-  const [newPost, setNewPost] = useState({ title: '', body: '', userId: 1 });
-  const [updatePost, setUpdatePost] = useState({ id: '', title: '', body: '' });
-  const [numPosts, setNumPosts] = useState('10');
+const Tab = createBottomTabNavigator();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+function HomeScreen({ navigation }) {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Flower</Text>
+      <Image
+        source={require('./assets/homescreen.jpeg')}
+        style={styles.image}
+      />
+      <Button
+        title="Go to Image Slider"
+        onPress={() => navigation.navigate('Image Slider')}
+      />
+    </View>
+  );
+}
 
-  const fetchData = () => {
-    setLoading(true);
-    axios.get('https://jsonplaceholder.typicode.com/posts?_limit=${numPosts}')
-      .then((response) => {
-        setData(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setLoading(false);
-      });
+const products = [
+  { id: '1', name: 'bunga 1', price: 'Rp. 80.000', image: require('./assets/bunga1.jpeg') },
+  { id: '2', name: 'bunga 2', price: 'Rp. 100.000', image: require('./assets/bunga2.jpeg') },
+  { id: '3', name: 'bunga 3', price: 'Rp. 150.000', image: require('./assets/bunga3.jpeg') },
+  { id: '4', name: 'bunga 4', price: 'Rp. 175.000', image: require('./assets/bunga4.jpeg') },
+];
+
+function ShopScreen() {
+  const handleAddToCart = (productName) => {
+    console.log(`Adding ${productName} to cart`);
+    Alert.alert('Added to Cart', `You have added ${productName} to your cart.`);
   };
-
-  const getPostById = () => {
-    axios.get('https://jsonplaceholder.typicode.com/posts/${postId}')
-      .then(response => setSinglePost(response.data))
-      .catch(error => console.error(error));
-  };
-
-  const addPost = () => {
-    axios.post('https://jsonplaceholder.typicode.com/posts', newPost)
-      .then(response => {
-        setData([...data, response.data]);
-        setNewPost({ title: '', body: '', userId: 1 });
-      })
-      .catch(error => console.error(error));
-  };
-
-  const deletePost = (id) => {
-    axios.delete('https://jsonplaceholder.typicode.com/posts/${id}')
-      .then(() => setData(data.filter(post => post.id !== id)))
-      .catch(error => console.error(error));
-  };
-
-  const updateExistingPost = () => {
-    axios.put('https://jsonplaceholder.typicode.com/posts/${updatePost.id}, updatePost')
-      .then(response => {
-        setData(data.map(post => (post.id === response.data.id ? response.data : post)));
-        setUpdatePost({ id: '', title: '', body: '' });
-      })
-      .catch(error => console.error(error));
-  };
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+  
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.form}>
-        <Text>Select Number of Posts to Fetch:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter number of posts"
-          value={numPosts}
-          keyboardType="numeric"
-          onChangeText={(value) => setNumPosts(value)}
-        />
-        <Button title="Fetch Posts" onPress={fetchData} />
-      </View>
-
-      {data.map((post) => (
-        <View key={post.id} style={styles.postBox}>
-          <Text style={styles.title}>Title: {post.title}</Text>
-          <Text style={styles.body}>Body: {post.body}</Text>
-          <Text style={styles.userId}>User ID: {post.userId}</Text>
-          <Button title="Delete" onPress={() => deletePost(post.id)} />
-        </View>
-      ))}
-
-      <View style={styles.form}>
-        <Text>Get Post By ID:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Post ID"
-          value={postId}
-          onChangeText={setPostId}
-        />
-        <Button title="Get Post" onPress={getPostById} />
-        {singlePost && (
-          <View style={styles.postBox}>
-            <Text style={styles.title}>Title: {singlePost.title}</Text>
-            <Text style={styles.body}>Body: {singlePost.body}</Text>
-            <Text style={styles.userId}>User ID: {singlePost.userId}</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Shop</Text>
+      <FlatList
+        data={products}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.product}>
+            <Image source={item.image} style={styles.productImage} />
+            <Text style={styles.productName}>{item.name}</Text>
+            <Text style={styles.productPrice}>{item.price}</Text>
+            <TouchableOpacity 
+              style={styles.button} 
+              onPress={() => handleAddToCart(item.name)}
+            >
+              <Text style={styles.buttonText}>Add to Cart</Text>
+            </TouchableOpacity>
           </View>
         )}
-      </View>
-
-      <View style={styles.form}>
-        <Text>Add New Post:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Title"
-          value={newPost.title}
-          onChangeText={(value) => setNewPost({ ...newPost, title: value })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Body"
-          value={newPost.body}
-          onChangeText={(value) => setNewPost({ ...newPost, body: value })}
-        />
-        <Button title="Add Post" onPress={addPost} />
-      </View>
-
-      <View style={styles.form}>
-        <Text>Update Post:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Post ID"
-          value={updatePost.id}
-          onChangeText={(value) => setUpdatePost({ ...updatePost, id: value })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Title"
-          value={updatePost.title}
-          onChangeText={(value) => setUpdatePost({ ...updatePost, title: value })}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Body"
-          value={updatePost.body}
-          onChangeText={(value) => setUpdatePost({ ...updatePost, body: value })}
-        />
-        <Button title="Update Post" onPress={updateExistingPost} />
-      </View>
-    </ScrollView>
+      />
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    backgroundColor: '#f5f5f5',
-  },
-  postBox: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 10,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#333',
-  },
-  body: {
-    fontSize: 14,
-    marginBottom: 5,
-    color: '#666',
-  },
-  userId: {
-    fontSize: 12,
-    color: '#999',
-  },
-  loadingContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
   },
-  form: {
-    marginVertical: 20,
-    padding: 10,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
-  input: {
-    height: 40,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
+  image: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
+  },
+  product: {
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    alignItems: 'center',
+  },
+  productImage: {
+    width: 100,
+    height: 100,
     marginBottom: 10,
-    paddingHorizontal: 10,
+  },
+  productName: {
+    fontSize: 18,
+    marginBottom: 5,
+  },
+  productPrice: {
     fontSize: 16,
-    color: '#333',
+    color: 'gray',
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
   },
 });
 
-export default Api;
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Shop" component={ShopScreen} />
+        <Tab.Screen name="Image Slider" component={ImageSlider} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
